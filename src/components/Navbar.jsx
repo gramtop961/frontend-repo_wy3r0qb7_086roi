@@ -1,17 +1,17 @@
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Menu, X } from 'lucide-react';
 
-export default function Navbar() {
+function NavbarInner() {
   const [open, setOpen] = useState(false);
 
-  const scrollTo = (id) => {
+  const scrollTo = useCallback((id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     setOpen(false);
-  };
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-black/40 border-b border-white/10">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-sm supports-[backdrop-filter]:bg-black/40 border-b border-white/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <button onClick={() => scrollTo('home')} className="text-base font-medium tracking-tight text-white/90 hover:text-white focus:outline-none">
@@ -40,3 +40,5 @@ export default function Navbar() {
     </header>
   );
 }
+
+export default React.memo(NavbarInner);

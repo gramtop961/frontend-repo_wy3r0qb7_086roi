@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const projects = [
   {
@@ -20,18 +21,19 @@ const projects = [
 
 const fadeIn = {
   hidden: { opacity: 0, y: 24 },
-  show: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: 0.1 + i * 0.08, duration: 0.6, ease: [0.22, 1, 0.36, 1] } }),
+  show: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: 0.06 + i * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] } }),
 };
 
-export default function Projects() {
+function ProjectsInner() {
+  const reduce = useReducedMotion();
   return (
     <section id="projects" className="relative bg-black py-24 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 10 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.45 }}
           className="text-2xl sm:text-3xl font-semibold text-white"
         >
           Featured Projects
@@ -41,12 +43,12 @@ export default function Projects() {
           {projects.map((p, i) => (
             <motion.article
               key={p.title}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.4 }}
+              initial={reduce ? { opacity: 1 } : 'hidden'}
+              whileInView={reduce ? { opacity: 1 } : 'show'}
+              viewport={{ once: true, amount: 0.35 }}
               variants={fadeIn}
               custom={i}
-              className="group relative rounded-2xl border border-white/10 bg-white/5 backdrop-blur hover:bg-white/[0.08] transition overflow-hidden"
+              className="group relative rounded-2xl border border-white/10 bg-white/5 hover:bg-white/[0.08] transition-colors overflow-hidden"
             >
               <div className="aspect-[16/10] bg-gradient-to-br from-fuchsia-500/30 via-purple-500/20 to-cyan-500/30" />
               <div className="p-5">
@@ -65,3 +67,5 @@ export default function Projects() {
     </section>
   );
 }
+
+export default React.memo(ProjectsInner);

@@ -1,15 +1,17 @@
-import { motion } from 'framer-motion';
+import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Github, Mail } from 'lucide-react';
 
-export default function Contact() {
+function ContactInner() {
+  const reduce = useReducedMotion();
   return (
     <section id="contact" className="relative bg-black py-24 sm:py-28 border-t border-white/10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={reduce ? { opacity: 1 } : { opacity: 0, y: 20 }}
+          whileInView={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.45 }}
           className="rounded-3xl border border-white/10 bg-gradient-to-br from-fuchsia-500/10 via-purple-500/5 to-blue-500/10 p-8 sm:p-12 text-center"
         >
           <h2 className="text-2xl sm:text-3xl font-semibold text-white">Let’s build something stellar</h2>
@@ -38,3 +40,5 @@ export default function Contact() {
     </section>
   );
 }
+
+export default React.memo(ContactInner);
