@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 // Lazy-load Spline to keep initial JS bundle small and improve time-to-interactive
 const LazySpline = lazy(() => import('@splinetool/react-spline'));
 
-export default function Hero() {
+function HeroInner() {
   const shouldReduceMotion = useReducedMotion();
   const [mountSpline, setMountSpline] = useState(false);
   const sectionRef = useRef(null);
@@ -38,7 +38,7 @@ export default function Hero() {
         <Suspense fallback={<div className="h-full w-full bg-gradient-to-b from-[#0b0b0b] to-black" />}> 
           {mountSpline ? (
             <LazySpline
-              scene="https://prod.spline.design/EF7JOSsHLk16Tlw9/scene.splinecode"
+              scene="https://prod.spline.design/4Zh-Q6DWWp5yPnQf/scene.splinecode"
               style={{ width: '100%', height: '100%' }}
             />
           ) : (
@@ -57,9 +57,13 @@ export default function Hero() {
           initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
           animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-2xl"
+          className="max-w-2xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 sm:p-8 shadow-[0_0_60px_-20px_rgba(168,85,247,0.35)]"
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white">
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-white/70">
+            <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-500 shadow-[0_0_10px_2px_rgba(217,70,239,0.7)]" />
+            Live • Futuristic UI
+          </div>
+          <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white">
             Futuristic Web Experiences
           </h1>
           <p className="mt-4 text-base sm:text-lg text-white/80">
@@ -78,3 +82,5 @@ export default function Hero() {
     </section>
   );
 }
+
+export default React.memo(HeroInner);
