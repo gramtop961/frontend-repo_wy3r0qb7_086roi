@@ -9,27 +9,69 @@ function HeroInner() {
   const [mountSpline, setMountSpline] = useState(false);
   const sectionRef = useRef(null);
 
-  // Mount the Spline scene only when the hero is near/in view to reduce initial load
+  // interactive mouse parallax + glow
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
+  const rafRef = useRef(0);
+
   useEffect(() => {
     const el = sectionRef.current;
     if (!el || typeof IntersectionObserver === 'undefined') {
       setMountSpline(true);
-      return;
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              setMountSpline(true);
+              io.disconnect();
+            }
+          });
+        },
+        { root: null, rootMargin: '200px', threshold: 0.01 }
+      );
+      io.observe(el);
+      return () => io.disconnect();
     }
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setMountSpline(true);
-            io.disconnect();
-          }
-        });
-      },
-      { root: null, rootMargin: '200px', threshold: 0.01 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
   }, []);
+
+  // Mouse tracking for parallax and glow
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    const handleMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      setMouse({ x, y });
+
+      if (shouldReduceMotion) return;
+
+      // Smooth parallax via rAF lerp
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        const cx = x - rect.width / 2;
+        const cy = y - rect.height / 2;
+        const px = Math.max(Math.min(cx / (rect.width / 2), 1), -1);
+        const py = Math.max(Math.min(cy / (rect.height / 2), 1), -1);
+        // Smaller translate for subtle effect
+        setParallax({ x: px * 10, y: py * 10 });
+      });
+    };
+
+    const handleLeave = () => {
+      setParallax({ x: 0, y: 0 });
+    };
+
+    el.addEventListener('mousemove', handleMove);
+    el.addEventListener('mouseleave', handleLeave);
+    return () => {
+      el.removeEventListener('mousemove', handleMove);
+      el.removeEventListener('mouseleave', handleLeave);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [shouldReduceMotion]);
 
   return (
     <section ref={sectionRef} id="home" className="relative min-h-screen w-full bg-black overflow-hidden">
@@ -38,7 +80,7 @@ function HeroInner() {
         <Suspense fallback={<div className="h-full w-full bg-gradient-to-b from-[#0b0b0b] to-black" />}> 
           {mountSpline ? (
             <LazySpline
-              scene="https://prod.spline.design/4Zh-Q6DWWp5yPnQf/scene.splinecode"
+              scene="https://prod.spline.design/zhZFnwyOYLgqlLWk/scene.splinecode"
               style={{ width: '100%', height: '100%' }}
             />
           ) : (
@@ -51,26 +93,43 @@ function HeroInner() {
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/70 to-transparent" />
 
+      {/* Cursor-follow glow - does not block canvas interaction */}
+      <div
+        className="pointer-events-none absolute size-80 rounded-full opacity-30 blur-3xl"
+        style={{
+          left: mouse.x - 160,
+          top: mouse.y - 160,
+          background: 'radial-gradient(closest-side, rgba(236,72,153,0.35), rgba(59,130,246,0.15), transparent)',
+          transition: shouldReduceMotion ? 'none' : 'transform 120ms ease-out',
+          transform: `translate3d(0,0,0)`
+        }}
+      />
+
       {/* Content overlay */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-28 pb-24">
         <motion.div
           initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
           animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-2xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 sm:p-8 shadow-[0_0_60px_-20px_rgba(168,85,247,0.35)]"
+          className="max-w-2xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 sm:p-8 shadow-[0_0_80px_-20px_rgba(59,130,246,0.35)]"
+          style={{
+            transform: shouldReduceMotion ? undefined : `translate3d(${parallax.x}px, ${parallax.y}px, 0)`,
+            willChange: shouldReduceMotion ? undefined : 'transform'
+          }}
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-white/70">
-            <span className="h-1.5 w-1.5 rounded-full bg-fuchsia-500 shadow-[0_0_10px_2px_rgba(217,70,239,0.7)]" />
-            Live • Futuristic UI
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_12px_2px_rgba(34,211,238,0.8)]" />
+            Live • Interactive cover
           </div>
           <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white">
-            Futuristic Web Experiences
+            Digital Experiences with Intent
           </h1>
           <p className="mt-4 text-base sm:text-lg text-white/80">
-            I craft interactive, high-performance websites with cinematic motion. Explore my work below.
+            A minimalist, interactive surface that responds to you. Explore the work, technology, and craft behind the pixels.
           </p>
           <div className="mt-8 flex items-center gap-3">
-            <a href="#projects" className="inline-flex items-center rounded-full bg-white text-black px-5 py-2.5 text-sm font-medium shadow/50 shadow-white/10 hover:shadow-white/20 transition">
+            <a href="#projects" className="group inline-flex items-center rounded-full bg-gradient-to-r from-cyan-400 to-rose-500 text-black px-5 py-2.5 text-sm font-medium shadow/50 shadow-white/10 transition hover:brightness-110">
+              <span className="bg-black/80 text-white rounded-full px-3 py-1 mr-3 text-[11px] font-semibold">New</span>
               View Projects
             </a>
             <a href="#contact" className="inline-flex items-center rounded-full border border-white/30 text-white px-5 py-2.5 text-sm font-medium hover:bg-white/10 transition">
