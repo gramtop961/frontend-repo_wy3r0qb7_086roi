@@ -80,7 +80,7 @@ function HeroInner() {
         <Suspense fallback={<div className="h-full w-full bg-gradient-to-b from-[#0b0b0b] to-black" />}> 
           {mountSpline ? (
             <LazySpline
-              scene="https://prod.spline.design/zhZFnwyOYLgqlLWk/scene.splinecode"
+              scene="https://prod.spline.design/WCoEDSwacOpKBjaC/scene.splinecode"
               style={{ width: '100%', height: '100%' }}
             />
           ) : (
@@ -99,7 +99,7 @@ function HeroInner() {
         style={{
           left: mouse.x - 160,
           top: mouse.y - 160,
-          background: 'radial-gradient(closest-side, rgba(236,72,153,0.35), rgba(59,130,246,0.15), transparent)',
+          background: 'radial-gradient(closest-side, rgba(56,189,248,0.35), rgba(244,63,94,0.2), transparent)',
           transition: shouldReduceMotion ? 'none' : 'transform 120ms ease-out',
           transform: `translate3d(0,0,0)`
         }}
@@ -111,7 +111,7 @@ function HeroInner() {
           initial={shouldReduceMotion ? false : { opacity: 0, y: 30 }}
           animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-2xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 sm:p-8 shadow-[0_0_80px_-20px_rgba(59,130,246,0.35)]"
+          className="max-w-2xl rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 sm:p-8 shadow-[0_0_90px_-25px_rgba(56,189,248,0.45)]"
           style={{
             transform: shouldReduceMotion ? undefined : `translate3d(${parallax.x}px, ${parallax.y}px, 0)`,
             willChange: shouldReduceMotion ? undefined : 'transform'
@@ -119,21 +119,20 @@ function HeroInner() {
         >
           <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-white/70">
             <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_12px_2px_rgba(34,211,238,0.8)]" />
-            Live • Interactive cover
+            Innovative Interfaces • Now
           </div>
           <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white">
-            Digital Experiences with Intent
+            Modular, Modern, Motion-first
           </h1>
           <p className="mt-4 text-base sm:text-lg text-white/80">
-            A minimalist, interactive surface that responds to you. Explore the work, technology, and craft behind the pixels.
+            A redesigned layout with a cinematic interactive cover and a clean corporate aesthetic.
           </p>
           <div className="mt-8 flex items-center gap-3">
             <a href="#projects" className="group inline-flex items-center rounded-full bg-gradient-to-r from-cyan-400 to-rose-500 text-black px-5 py-2.5 text-sm font-medium shadow/50 shadow-white/10 transition hover:brightness-110">
-              <span className="bg-black/80 text-white rounded-full px-3 py-1 mr-3 text-[11px] font-semibold">New</span>
-              View Projects
+              Explore Work
             </a>
             <a href="#contact" className="inline-flex items-center rounded-full border border-white/30 text-white px-5 py-2.5 text-sm font-medium hover:bg-white/10 transition">
-              Get in touch
+              Contact
             </a>
           </div>
         </motion.div>
